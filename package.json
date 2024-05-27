@@ -1,0 +1,29 @@
+{
+  "name": "drone_site_be2k24",
+  "version": "1.0.0",
+  "description": "Backend for drone_site",
+  "main": "index.js",
+  "scripts": {
+    "server":"nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harsh2004R/drone_site_BE2k24.git"
+  },
+  "author": "Harsh2004R",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Harsh2004R/drone_site_BE2k24/issues"
+  },
+  "homepage": "https://github.com/Harsh2004R/drone_site_BE2k24#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
+    "nodemon": "^3.1.0"
+  }
+}
