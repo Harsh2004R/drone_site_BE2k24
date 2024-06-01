@@ -3,6 +3,7 @@ const { connection } = require("./db.js")
 require("dotenv").config()
 const cors = require('cors')
 const { userRouter } = require("./routes/user.routes.js");
+const {adminRouter} = require("./routes/admin.routes.js")
 const { cameraRouter } = require("./routes/camera_drone.routes.js");
 const app = express();
 app.use(express.json());
@@ -12,8 +13,14 @@ app.use(express.json());
 app.use(cors());
 app.use("/users", userRouter)
 app.use("/camera_drones", cameraRouter)
+app.use("/admin", adminRouter)
+app.get("/", (req, res) => {
+    res.status(200).json({ msg: "hello" })
+})
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, async () => {
+const LOCAL_IP = "192.168.124.120"
+
+app.listen(PORT, LOCAL_IP, async () => {
     try {
         console.log(`server is live at port :-${PORT}`)
         await connection;
