@@ -46,9 +46,53 @@ userRouter.post("/login", async (req, res) => {
         // Creating a JWT token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.status(200).json({ msg: "Login successful", token: token });
+        res.status(200).json({
+            msg: "Login successful",
+            token: token,
+            user: {
+                cart: user.cart,
+                userId: user._id
+            }
+        });
     } catch (error) {
         res.status(500).json({ msg: "Login failed", error: error.message });
+    }
+});
+
+userRouter.get("/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const loggedInUser = await UserModel.findById(id);
+        if (!loggedInUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ "USER": loggedInUser });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+})
+
+// Update user's cart route
+userRouter.put("/:id", async (req, res) => {
+    const { id } = req.params;
+    const { cart } = req.body;
+
+    try {
+        // Find the user by ID
+        const user = await UserModel.findById(id);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        // Update the user's cart
+        user.cart = cart;
+
+        // Save the updated user data
+        await user.save();
+
+        res.status(200).json({ msg: "Cart updated successfully", user });
+    } catch (error) {
+        res.status(500).json({ msg: "Failed to update cart", error: error.message });
     }
 });
 
