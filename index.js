@@ -8,6 +8,7 @@ const { cameraRouter } = require("./routes/camera_drone.routes.js");
 const { imageRouter } = require("./routes/image.routes.js");
 const { productRoute } = require("./routes/product.routes.js");
 const { cartRoute } = require("./routes/cart.route.js");
+const {emailRouter} = require("./routes/send.email.routes.js");
 const app = express();
 app.use(express.json());
 
@@ -20,6 +21,7 @@ app.use("/admin", adminRouter)
 app.use('/api/images', imageRouter);
 app.use('/api/all/data', productRoute);
 app.use('/api/cart', cartRoute);
+app.use("/api/send",emailRouter);
 app.get("/", (req, res) => {
     res.status(200).json({ msg: "hello" })
 })
