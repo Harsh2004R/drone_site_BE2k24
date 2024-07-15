@@ -1,15 +1,16 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const ejs = require("ejs");
+const path = require("path");
 const emailRouter = express.Router();
 emailRouter.use(express.json());
 
 
 // sendEmail fnction (Controller) ....
 const sendEmail = async (req, res) => {
+    const { to, subject, email } = req.body;
     const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
         service: "gmail",
         auth: {
             user: process.env.EMAIL_USER,
@@ -19,19 +20,21 @@ const sendEmail = async (req, res) => {
 
     try {
         // send mail with defined transport object
+        const emailTemplatePath = path.join(__dirname, 'EmailTemplates', 'welcomeEmail.ejs');
+        const html = await ejs.renderFile(emailTemplatePath, { email });
         const info = await transporter.sendMail({
             from: `"Your Name" <${process.env.EMAIL_USER}>`, // sender address
-            to: "ojhasoni146@gmail.com", // list of receivers
-            subject: "Hello ✔", // Subject line
-            text: "Hello world?", // plain text body
-            html: "<b>Hello user-----xyz?</b>", // html body
+            to, // list of receivers
+            subject, // Subject line
+            // plain text body
+            html, // html body
         });
 
         console.log("Message sent: %s", info.messageId);
-        res.json({ msg: `Message sent: ${info.messageId}` });
+        return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error("Error sending email: ", error);
-        res.status(500).json({ error: "Error sending email" });
+        return { success: false, error: "Error sending email" };
     }
 }
 
