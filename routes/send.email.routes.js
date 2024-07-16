@@ -23,7 +23,7 @@ const sendEmail = async (req, res) => {
         const emailTemplatePath = path.join(__dirname, 'EmailTemplates', 'welcomeEmail.ejs');
         const html = await ejs.renderFile(emailTemplatePath, { email });
         const info = await transporter.sendMail({
-            from: `"Your Name" <${process.env.EMAIL_USER}>`, // sender address
+            from: `"DJI Official" <${process.env.EMAIL_USER}>`, // sender address
             to, // list of receivers
             subject, // Subject line
             // plain text body
