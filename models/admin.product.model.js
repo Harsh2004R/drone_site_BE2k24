@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+
+const admin_Schema = mongoose.Schema({
+    admin_name: { type: String },
+    email: { type: String },
+    password: { type: String },
+})
 const productSchema = mongoose.Schema({
     cover_img: { type: String, require: true },
     background_img: String,
@@ -11,7 +17,7 @@ const productSchema = mongoose.Schema({
 }, { timestamps: true })
 
 
-
+const AdminModel = mongoose.model("admin",admin_Schema);
 const ProductModel = mongoose.model('product', productSchema);
 
-module.exports = { ProductModel };
+module.exports = { ProductModel,AdminModel };

@@ -7,7 +7,7 @@ const { adminRouter } = require("./routes/admin.routes.js");
 const { cameraRouter } = require("./routes/camera_drone.routes.js");
 const { imageRouter } = require("./routes/image.routes.js");
 const { productRoute } = require("./routes/product.routes.js");
-const { cartRoute } = require("./routes/cart.route.js");
+const { cartRoute } = require("./routes/cart.routes.js");
 const {emailRouter} = require("./routes/send.email.routes.js");
 const app = express();
 app.use(express.json());
