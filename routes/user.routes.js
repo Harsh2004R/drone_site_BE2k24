@@ -90,6 +90,27 @@ userRouter.get("/:id", async (req, res) => {
     }
 })
 
+userRouter.post("/shophistory", async (req, res) => {
+    const { id, payload } = req.body;
+    try {
+        // Find the user by ID and update their shop_history...
+        const user = await UserModel.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Adding the new shop history entry...
+        user.shop_history.push(payload);
+
+        // Save the updated user document...
+        await user.save();
+
+        res.status(200).json({ message: 'Shop history updated successfully', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+})
+
 
 module.exports = {
     userRouter

@@ -3,6 +3,7 @@ require("dotenv").config()
 const bodyParser = require('body-parser');
 const crypto = require("crypto")
 const Razorpay = require("razorpay");
+const { Razorpay_Payment } = require('../models/razorpay.model.js')
 const paymentRouter = express.Router();
 paymentRouter.use(express.json());
 paymentRouter.use(express.urlencoded({ extended: true }));
@@ -72,11 +73,14 @@ paymentRouter.post("/paymentVerification", async (req, res) => {
         if (expectedSignature === razorpay_signature) {
             // here we add signature to data base....
 
-
+            await Razorpay_Payment.create({
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature
+            })
 
             // redirect user to success page...
-            res.redirect(`http://192.168.188.120:5000/success/payment?reference${razorpay_payment_id}`)
-            return res.status(200).json({ success: true });
+            res.redirect(`http://192.168.188.120:5000/success/payment?reference=${razorpay_payment_id}`)
         } else {
             return res.status(400).json({ message: 'Invalid signature' });
         }
