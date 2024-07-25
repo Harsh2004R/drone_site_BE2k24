@@ -68,7 +68,8 @@ userRouter.post("/login", async (req, res) => {
             token: token,
             user: {
                 cart: user.cart,
-                userId: user._id
+                userId: user._id,
+                email: user.email,
             }
         });
     } catch (error) {
@@ -89,29 +90,6 @@ userRouter.get("/:id", async (req, res) => {
     }
 })
 
-// Update user's cart route
-userRouter.put("/:id", async (req, res) => {
-    const { id } = req.params;
-    const { cart } = req.body;
-
-    try {
-        // Find the user by ID
-        const user = await UserModel.findById(id);
-        if (!user) {
-            return res.status(404).json({ msg: "User not found" });
-        }
-
-        // Update the user's cart
-        user.cart = cart;
-
-        // Save the updated user data
-        await user.save();
-
-        res.status(200).json({ msg: "Cart updated successfully", user });
-    } catch (error) {
-        res.status(500).json({ msg: "Failed to update cart", error: error.message });
-    }
-});
 
 module.exports = {
     userRouter
