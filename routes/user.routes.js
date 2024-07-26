@@ -25,7 +25,7 @@ userRouter.post("/register", async (req, res) => {
             // Create a new user with the hashed password
             const new_user = new UserModel({ email: email, password: hash });
             // sending email to the user before user's registration.......
-            const emailResponse = await sendEmail({ body: { to: email, subject: "Welcome!" } });
+            const emailResponse = await sendEmail({ body: { to: email, subject: "Welcome to DJI Official cloned by - Harsh Sharma!" } });
             // Check if email was sent successfully
             if (emailResponse.success) {
                 // Saving the user to the database...
