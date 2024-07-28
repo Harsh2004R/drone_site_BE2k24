@@ -1,11 +1,13 @@
 const express = require('express');
 require("dotenv").config()
-const bodyParser = require('body-parser');
+const nodemailer = require("nodemailer");
+const ejs = require("ejs");
+const path = require("path");
 const crypto = require("crypto")
 const Razorpay = require("razorpay");
 const { Razorpay_Payment } = require('../models/razorpay.model.js');
 const { UserModel } = require('../models/user.model.js');
-const { sendEmail } = require("../routes/send.email.routes.js")
+// const { sendEmail } = require("../routes/send.email.routes.js")
 const paymentRouter = express.Router();
 paymentRouter.use(express.json());
 paymentRouter.use(express.urlencoded({ extended: true }));
@@ -26,16 +28,17 @@ paymentRouter.get("/get/key", (req, res) => {
 
 paymentRouter.post("/checkout", async (req, res) => {
     try {
-        const { amount, uid } = req.body;
+        const { amount, uid, } = req.body;
         if (!amount) {
             throw new Error("Amount is required");
         }
 
         const options = {
             // converting usd $ to rupees ₹
-            amount: amount * 1000, // amount in the smallest currency unit
+            amount: amount * 100,
             currency: "INR",
             receipt: uid,
+            // offer_id: user_email,
         };
         const order = await instance.orders.create(options);
 
@@ -95,18 +98,47 @@ paymentRouter.post("/paymentVerification", async (req, res) => {
 
 
 
+const sendEmail = async ({ to, subject, orderId }) => {
+    if (!to || !subject || !orderId) {
+        throw new Error('Missing parameters for sendEmail function');
+    }
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        },
+    });
+    try {
+        // send mail with defined transport object
+        const emailTemplatePath = path.join(__dirname, 'EmailTemplates', 'conf_payment.ejs');
+        const html = await ejs.renderFile(emailTemplatePath, { orderId });
+        const info = await transporter.sendMail({
+            from: `"DJI Official" <${process.env.EMAIL_USER}>`,
+            to,
+            subject,
+            html,
+        });
+        console.log("Message sent: %s", info.messageId);
+        return { success: true, messageId: info.messageId };
+    } catch (error) {
+        console.error("Error sending email: ", error.message);
+        return { success: false, error: "Error sending email" };
+    }
+}
+
+
+
 
 paymentRouter.post("/sendPaymentMail", async (req, res) => {
     const { email, reff_id } = req.body
     try {
         const user = await UserModel.findOne({ email });
-        // res.status(200).json({ msg: "true" ,loggedIn:user})
         if (user) {
-            // return res.status(200).json({ message: 'User found' });
             const emailResponse = await sendEmail({
                 to: email,
                 subject: "Purchase Confirmation",
-                email: { orderId: reff_id}
+                orderId: reff_id
             });
             if (emailResponse.success) {
                 return res.status(200).json({ msg: "email successfully sent to user", email: email })
@@ -115,16 +147,10 @@ paymentRouter.post("/sendPaymentMail", async (req, res) => {
             }
         } else {
             return res.status(404).json({ message: 'User not found' });
-
         }
-
     } catch (error) {
-        res.status(400).json({ msg: "req failed || denied bt server..." })
+        res.status(400).json({ msg: "req failed || denied bt server...", error_msg: error.message })
     }
-
-
-    // res.status(200).json({ msg: "true" })
-    // console.log( "email", email, "reff_id", reff_id)
 })
 
 
