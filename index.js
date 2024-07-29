@@ -29,7 +29,7 @@ app.use("/api",paymentRouter)
 app.get("/", (req, res) => {
     res.status(200).json({ msg: "hello" })
 })
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4000;
 const LOCAL_IP = process.env.LOCAL_IP
 
 app.listen(PORT, LOCAL_IP, async () => {
