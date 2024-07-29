@@ -55,9 +55,8 @@ adminRouter.post("/login", async (req, res) => {
         res.status(200).json({
             msg: "Login successful",
             token: token,
-            admin: {
-                adminId: admin._id
-            }
+            adminId: admin._id
+            
         });
     } catch (error) {
         res.status(500).json({ msg: "Login failed", error: error.message });
