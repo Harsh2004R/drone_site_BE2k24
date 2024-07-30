@@ -68,6 +68,7 @@ paymentRouter.post("/paymentVerification", async (req, res) => {
         }
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
+        console.log(body)
         const expectedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
             .update(body.toString())
@@ -82,7 +83,8 @@ paymentRouter.post("/paymentVerification", async (req, res) => {
                 razorpay_signature
             })
             // redirect user to success page...
-            res.redirect(`http://192.168.188.120:5000/success/payment?reference=${razorpay_payment_id}`)
+
+            res.redirect(`https://dji-global.netlify.app/success/payment?reference=${razorpay_payment_id}`)
         } else {
             return res.status(400).json({ message: 'Invalid signature' });
         }
